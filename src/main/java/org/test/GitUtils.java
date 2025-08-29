@@ -5,6 +5,7 @@ import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.dircache.DirCache;
+import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.test.exceptions.GitAddException;
 import org.test.exceptions.GitCommitException;
@@ -91,11 +92,13 @@ public class GitUtils {
 
     public void gitPush(){
         PushCommand pushCommand = git.push();
+        Repository repo = git.getRepository();
+        pushCommand.setRemote(repo.getRemoteName("origin"));
         String remoteRepo = pushCommand.getRemote();
-//        if(remoteRepo == null || remoteRepo.isEmpty()){
-//            log.severe("Failed to find a remote git repository to push to. Returning");
-//            throw new GitPushException("Failed to find a remote git repository to push changes to.");
-//        }
+        if(remoteRepo == null || remoteRepo.isEmpty()){
+            log.severe("Failed to find a remote git repository to push to. Returning");
+            throw new GitPushException("Failed to find a remote git repository to push changes to.");
+        }
 
         try{
             pushCommand.call();

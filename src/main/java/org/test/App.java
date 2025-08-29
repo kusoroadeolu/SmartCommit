@@ -9,7 +9,7 @@ public class App{
 
     public static void main(String[] args){
         SmartCommitService smartCommitService = new SmartCommitService();
-        smartCommitService.directRun("detail");
+        smartCommitService.directRun("");
 //        System.out.println(message);
     }
 
