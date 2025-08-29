@@ -9,7 +9,7 @@ public class App{
 
     public static void main(String[] args){
         SmartCommitService smartCommitService = new SmartCommitService();
-        smartCommitService.directRun("");
+        smartCommitService.directRunManualMessage("Testing JGit push");
 //        System.out.println(message);
     }
 
