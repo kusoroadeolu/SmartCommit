@@ -1,4 +1,4 @@
-package org.test;
+package org.test.singletons;
 
 
 import org.eclipse.jgit.api.Git;
@@ -11,10 +11,10 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
 
-public class ProgramInitializer {
+public class Initializer {
 
     private static final String ROOT_DIR = System.getProperty("user.dir");
-    private final static Logger log = Logger.getLogger(ProgramInitializer.class.getName());
+    private final static Logger log = Logger.getLogger(Initializer.class.getName());
     private final static Set<String> CACHED_EXCLUSIONS = new HashSet<>();
 
     public Git initGit(){
@@ -41,10 +41,10 @@ public class ProgramInitializer {
 
 
     private static class ProgramInitializerHelper{
-        private static final ProgramInitializer INITIALIZER = new ProgramInitializer();
+        private static final Initializer INITIALIZER = new Initializer();
     }
 
-    public static ProgramInitializer getInstance(){
+    public static Initializer getInstance(){
         return ProgramInitializerHelper.INITIALIZER;
     }
 
