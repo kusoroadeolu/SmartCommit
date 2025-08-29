@@ -57,18 +57,18 @@ public class SmartCommitService {
         gitUtils.gitPush();
        }catch (Exception e){
            log.info("A Git exception occurred while trying to execute direct run");
-           throw new SmartCommitException("A Git exception occurred while trying to execute direct run");
+           throw new SmartCommitException("A Git exception occurred while trying to execute direct run", e);
        }
     }
 
-    public void directRunManualMessage(String mode, String commitMessage){
+    public void directRunManualMessage(String commitMessage){
         try{
             gitUtils.gitAdd();
             gitUtils.gitCommit(commitMessage);
             gitUtils.gitPush();
         }catch (Exception e){
             log.info("A Git exception occurred while trying to execute direct run");
-            throw new SmartCommitException("A Git exception occurred while trying to execute direct run");
+            throw new SmartCommitException("A Git exception occurred while trying to execute direct run", e);
         }
     }
 
