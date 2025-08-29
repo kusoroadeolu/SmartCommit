@@ -93,7 +93,7 @@ public class GitUtils {
 
     public void gitPush(){
         PushCommand pushCommand = git.push().setRemote("origin");
-        pushCommand.setRefSpecs(new RefSpec("refs/heads/main:/refs/heads/main"));
+        pushCommand.setRefSpecs(new RefSpec("refs/heads/main:refs/heads/main"));
         String remoteRepo = pushCommand.getRemote();
         if(remoteRepo == null || remoteRepo.isEmpty()){
             log.severe("Failed to find a remote git repository to push to. Returning");
