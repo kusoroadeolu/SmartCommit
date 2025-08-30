@@ -34,7 +34,6 @@ public class GitUtils {
      * @param excludedFileExtensions File extensions to exclude from the diff
      * @return A list of diff entries
      * */
-    @ExcludeFileExtensions
     public List<DiffEntry> gitDiffEntries(Set<String> excludedFileExtensions){
         DiffCommand diffCommand = git.diff().setCached(true);
 
@@ -95,23 +94,17 @@ public class GitUtils {
         }
     }
 
+    //This will always push to the main branch
     public void gitPush(){
         PushCommand pushCommand = git.push();
-        pushCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(Dotenv.load().get("PAT_TOKEN"), ""));
-
-////        pushCommand.setRefSpecs(new RefSpec("refs/heads/main:refs/heads/main"));
-        String remoteRepo = pushCommand.getRemote();
-//        if(remoteRepo == null || remoteRepo.isEmpty()){
-//            log.severe("Failed to find a remote git repository to push to. Returning");
-//            throw new GitPushException("Failed to find a remote git repository to push changes to.");
-//        }
-
+        String patToken = FileUtils.extractPATToken();
+        pushCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(patToken , ""));
         try{
             pushCommand.call();
-            log.info(String.format("Successfully pushed changes to remote git repository. Repository: {%s}", remoteRepo));
+            log.info("Successfully pushed changes to remote git repository");
         }catch (GitAPIException e){
-            log.severe(String.format("A Git API error occurred while trying to push changes to remote repository. Repository: {%s}", remoteRepo));
-            throw new GitPushException(String.format("A Git API error occurred while trying to push changes to remote repository. Repository: {%s}", remoteRepo), e);
+            log.severe("A Git API error occurred while trying to push changes to remote repository.");
+            throw new GitPushException("A Git API error occurred while trying to push changes to remote repository", e);
         }
     }
 

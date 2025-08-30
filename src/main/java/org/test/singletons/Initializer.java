@@ -3,6 +3,7 @@ package org.test.singletons;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.test.FileUtils;
 import org.test.exceptions.RepositoryException;
 
 import java.io.File;

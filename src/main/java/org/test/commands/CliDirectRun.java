@@ -1,0 +1,38 @@
+package org.test.commands;
+
+import org.test.SmartCommitService;
+import org.test.singletons.GeminiClient;
+import picocli.CommandLine;
+
+@CommandLine.Command(
+        header = "Direct Run Command",
+        version = "1.0.0",
+        name = "direct-run",
+        mixinStandardHelpOptions = true,
+        description = "Allows you to add, commit and push changes to your main branch(with or without a suggested commit message)",
+        optionListHeading = "Options are: \n"
+)
+public class CliDirectRun implements Runnable{
+
+    @CommandLine.Option(
+            names = {"-m", "--mode"},
+            description = "Prints a commit message with more diff context \"detail\", otherwise defaults to a summary message with less diff context",
+            paramLabel = "<commit mode>"
+    )
+    private String mode;
+
+    @CommandLine.Option(
+            names = {"-msg", "--message"},
+            description = "Your custom commit message",
+            paramLabel = "<commit message>"
+    )
+    private String message;
+
+    @Override
+    public void run() {
+        SmartCommitService smartCommitService = new SmartCommitService();
+        smartCommitService.directRun(mode.toLowerCase(), message);
+
+
+    }
+}

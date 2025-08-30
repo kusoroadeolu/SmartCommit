@@ -39,3 +39,4 @@ build/
 
 ### Env Variables ###
 .env
+smartcommit-config.json
