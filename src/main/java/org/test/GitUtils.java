@@ -1,6 +1,7 @@
 package org.test;
 
 
+import com.google.api.client.util.SecurityUtils;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -95,15 +96,15 @@ public class GitUtils {
     }
 
     public void gitPush(){
-        PushCommand pushCommand = git.push().setRemote("git@github.com:kusoroadeolu/SmartCommit.git");
-        pushCommand.setRefSpecs(new RefSpec("refs/heads/main:refs/heads/main"));
+        PushCommand pushCommand = git.push();
+        pushCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(Dotenv.load().get("PAT_TOKEN"), ""));
 
-//        pushCommand.setCredentialsProvider(new ChainingCredentialsProvider(Dotenv.load().get("GIT_USERNAME"), Dotenv.load().get("GIT_PASSWORD")));
+////        pushCommand.setRefSpecs(new RefSpec("refs/heads/main:refs/heads/main"));
         String remoteRepo = pushCommand.getRemote();
-        if(remoteRepo == null || remoteRepo.isEmpty()){
-            log.severe("Failed to find a remote git repository to push to. Returning");
-            throw new GitPushException("Failed to find a remote git repository to push changes to.");
-        }
+//        if(remoteRepo == null || remoteRepo.isEmpty()){
+//            log.severe("Failed to find a remote git repository to push to. Returning");
+//            throw new GitPushException("Failed to find a remote git repository to push changes to.");
+//        }
 
         try{
             pushCommand.call();
