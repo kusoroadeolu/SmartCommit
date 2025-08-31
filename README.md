@@ -10,13 +10,13 @@
 #### a. Go to any directory in your device, 
 #### b.Create a folder named bin and drop the provided .bat file in there, 
 #### c. Open up system variables, go to Path and add the directory path(of the folder holding the .bat file not the dir path of the .bat file itself) to the Path system variables
+#### NOTE: The bat file allows you to use smartcommit in any git directory, so it's definitely cool to have unless you want to be typing docker commands for days, otherwise you might as well just stick to plain old git
+
 #### d. To ensure you've set up everything properly, go to your cmd line and type in "where smartcommit". You should see the location of the bat file. If you do you've set it up properly
 
 ## COMMANDS
-### Help Commands
+### Help Command
 #### smartcommit -h or smartcommit --help -> Shows the description of smart commit and all subcommands under it
-#### smartcommit suggest -h or  suggest --help -> Shows the description of the smart commit suggest commands and all other command options under it
-#### smartcommit direct-run -h or direct-run --help -> Shows the description of the smart commit direct-run commands and all other command options under it
 
 ### Init command
 #### smartcommit --init -> Checks if the folder it is initialized in is a git repository and creates the config file
@@ -43,6 +43,7 @@
 #### You need a PAT token to use the direct run command with https. You can get one from Settings -> Developer Settings -> PAT token on your GitHub account
 #### You can choose which file extensions you want to exclude when generating diff commit messages by adding the file extensions in the exclude array in the config file. E.g. exclude: [".md"] -> This will exclude .md files from being processed when creating commit messages
 #### You can also change your default commit context mode in your config file to prevent always setting it when you want to suggest commit messages
+#### IMPORTANT!!!! Always ensure you add your config file to gitignore to prevent exposing your secret API/PAT keys
 
 ### FEATURES ILL CONSIDER FOR LATER
 #### Global config files to avoid constant re-config unless the user explicitly enables it
