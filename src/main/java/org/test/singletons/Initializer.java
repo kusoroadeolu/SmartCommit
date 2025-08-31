@@ -5,6 +5,7 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.test.FileUtils;
 import org.test.exceptions.RepositoryException;
+import org.test.exceptions.SmartCommitException;
 
 import java.io.File;
 import java.io.IOException;

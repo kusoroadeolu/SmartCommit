@@ -16,9 +16,7 @@ public class DiffConverter {
 
     public static String diffSummariesToJson(List<DiffSummary> summaries){
             try{
-                String str = OBJECT_MAPPER.writeValueAsString(summaries);
-                System.out.println(str);
-                return str;
+                return OBJECT_MAPPER.writeValueAsString(summaries);
             }catch (JsonProcessingException e){
                 log.severe("An unexpected error occurred while trying to write diff summary objects to JSON");
                 throw new GitDiffException("An unexpected error occurred while trying to write diff summary objects to JSON");

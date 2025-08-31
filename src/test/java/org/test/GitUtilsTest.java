@@ -6,10 +6,12 @@ import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.dircache.DirCache;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.transport.PushResult;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.test.exceptions.GitAddException;
@@ -23,7 +25,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -225,66 +227,37 @@ class GitUtilsTest {
     void gitPush_shouldSuccessfullyPushChanges() throws GitAPIException {
         // Arrange
         PushCommand pushCommand = mock(PushCommand.class);
-        String remoteRepo = "origin";
+        String patToken = "pat-token";
+
+        try(MockedStatic<FileUtils> utils = Mockito.mockStatic(FileUtils.class)){
+            utils.when(FileUtils::extractPATToken).thenReturn(patToken);
+        }
+
         when(git.push()).thenReturn(pushCommand);
-        when(pushCommand.setRemote(remoteRepo)).thenReturn(pushCommand);
-        when(pushCommand.getRemote()).thenReturn(remoteRepo);
-        when(pushCommand.call()).thenReturn(Collections.singletonList(mock(PushResult.class)));// Return a successful push result
+        when(pushCommand.setCredentialsProvider(any(UsernamePasswordCredentialsProvider.class))).thenReturn(pushCommand);
 
         // Act
         gitUtils.gitPush();
 
         // Assert
         verify(git, times(1)).push();
-        verify(pushCommand, times(1)).setRemote(remoteRepo);
-        verify(pushCommand, times(1)).getRemote();
+        verify(pushCommand, times(1)).setCredentialsProvider(any(UsernamePasswordCredentialsProvider.class));
         verify(pushCommand, times(1)).call();
 
     }
 
     @Test
-    void gitPush_shouldThrowGitPushException_whenRemoteIsNull() throws GitAPIException {
-        // Arrange
-        PushCommand pushCommand = mock(PushCommand.class);
-        when(git.push()).thenReturn(pushCommand);
-        when(pushCommand.setRemote("origin")).thenReturn(pushCommand);
-        when(pushCommand.getRemote()).thenReturn(null); // Simulate null remote
-
-        // Act & Assert
-        GitPushException thrown = assertThrows(GitPushException.class, () -> {
-            gitUtils.gitPush();
-        });
-
-        assertTrue(thrown.getMessage().contains("Failed to find a remote git repository to push changes to."));
-        verify(pushCommand, never()).call();
-    }
-
-    @Test
-    void gitPush_shouldThrowGitPushException_whenRemoteIsEmpty() throws GitAPIException {
-        // Arrange
-        PushCommand pushCommand = mock(PushCommand.class);
-        when(git.push()).thenReturn(pushCommand);
-        when(pushCommand.setRemote("origin")).thenReturn(pushCommand);
-        when(pushCommand.getRemote()).thenReturn("");
-
-        // Act & Assert
-        GitPushException thrown = assertThrows(GitPushException.class, () -> {
-            gitUtils.gitPush();
-        });
-
-        assertTrue(thrown.getMessage().contains("Failed to find a remote git repository to push changes to."));
-        verify(pushCommand, never()).call();
-    }
-
-
-    @Test
     void gitPush_shouldThrowGitPushException_onGitAPIError() throws GitAPIException {
         // Arrange
-        String remoteRepo = "origin";
+        String patToken = "token";
         PushCommand pushCommand = mock(PushCommand.class);
+
+        try(MockedStatic<FileUtils> utils = Mockito.mockStatic(FileUtils.class)){
+            utils.when(FileUtils::extractPATToken).thenReturn(patToken);
+        }
+
         when(git.push()).thenReturn(pushCommand);
-        when(pushCommand.setRemote(remoteRepo)).thenReturn(pushCommand);
-        when(pushCommand.getRemote()).thenReturn(remoteRepo);
+        when(pushCommand.setCredentialsProvider(any(UsernamePasswordCredentialsProvider.class))).thenReturn(pushCommand);
         when(pushCommand.call()).thenThrow(new GitAPIException("Test Git API Push Error") {}); // Simulate GitAPIException
 
         // Act & Assert
@@ -292,7 +265,7 @@ class GitUtilsTest {
             gitUtils.gitPush();
         });
 
-        assertTrue(thrown.getMessage().contains(String.format("A Git API error occurred while trying to push changes to remote repository. Repository: {%s}", remoteRepo)));
+        assertTrue(thrown.getMessage().contains("A Git API error occurred"));
         assertInstanceOf(GitAPIException.class, thrown.getCause());
 
     }

@@ -19,9 +19,9 @@ public class SmartCommitService {
     private static final Logger log = Logger.getLogger(SmartCommitService.class.getName());
 
     public SmartCommitService(){
-        Git git = initConfigProp();
+        Git git = new SmartCommitInitializer().initConfig();
         gitUtils = new GitUtils(git);
-        parser = new DiffEntryParser(gitUtils, git);
+        parser = new DiffEntryParser(git);
         geminiClient = GeminiClient.getInstance();
     }
 
@@ -30,6 +30,10 @@ public class SmartCommitService {
         try{
             Set<String> excludedFileExtensions = FileUtils.extractExcludedExtensions();
             List<DiffEntry> entries = gitUtils.gitDiffEntries(excludedFileExtensions);
+
+            if(entries == null || entries.isEmpty()){
+                return "No diff entries found to generate a commit message";
+            }
 
             if(mode == null || mode.isEmpty()){
                 mode = FileUtils.extractCommitMode();
@@ -77,6 +81,10 @@ public class SmartCommitService {
        try{
            gitUtils.gitAdd();
            if(Objects.equals(mode, "manual")){
+               if(message == null || message.isEmpty()){
+                   log.info("Messages in manual mode cannot be empty or null. Please write a valid message");
+                   throw new SmartCommitException("Messages in manual mode cannot be empty or null. Please write a valid message");
+               }
                gitUtils.gitCommit(message);
            }else{
                String suggestedMessage = suggestMessage(mode);
@@ -89,25 +97,4 @@ public class SmartCommitService {
            throw new SmartCommitException("A Git exception occurred while trying to execute direct run", e);
        }
     }
-
-
-    //Allows graceful close of git stream with try catch auto close
-    private Git initConfigProp(){
-        try(Git git = Initializer.getInstance().initGit()){
-            FileUtils.createConfigFile();
-            log.info("Successfully initialized smart-commit and created config file");
-            return git;
-        }catch (Exception e) {
-            log.severe("An unexpected error occurred while trying to initialize config properties.");
-            throw new SmartCommitException("An unexpected error occurred while trying to initialize config properties.", e);
-        }
-    }
-
-
-
-
-
-
-
-
 }

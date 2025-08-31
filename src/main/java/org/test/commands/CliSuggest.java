@@ -19,7 +19,7 @@ public class CliSuggest implements Runnable{
             description = "Prints a commit message with more diff context \"detail\", otherwise defaults to a summary message with less diff context",
             paramLabel = "<commit mode>"
     )
-    private String mode;
+    private String mode = "";
 
     public void run(){
         SmartCommitService sc = new SmartCommitService();

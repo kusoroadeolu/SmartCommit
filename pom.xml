@@ -64,11 +64,11 @@
       <artifactId>picocli</artifactId>
       <version>4.7.7</version>
     </dependency>
-      <dependency>
-        <groupId>io.github.cdimascio</groupId>
-        <artifactId>dotenv-java</artifactId>
-        <version>2.2.0</version>
-      </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-nop</artifactId>
+      <version>2.0.13</version> <!-- match the version SLF4J API you're using -->
+    </dependency>
     <dependency>
       <groupId>org.eclipse.jgit</groupId>
       <artifactId>org.eclipse.jgit.ssh.apache</artifactId>
@@ -121,6 +121,4 @@
       </plugin>
     </plugins>
   </build>
-
-
 </project>

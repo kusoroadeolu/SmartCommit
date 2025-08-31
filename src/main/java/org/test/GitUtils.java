@@ -1,16 +1,11 @@
 package org.test;
 
 
-import com.google.api.client.util.SecurityUtils;
-import io.github.cdimascio.dotenv.Dotenv;
 import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.dircache.DirCache;
-import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
-import org.eclipse.jgit.transport.ChainingCredentialsProvider;
-import org.eclipse.jgit.transport.RefSpec;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.test.exceptions.GitAddException;
 import org.test.exceptions.GitCommitException;
@@ -49,8 +44,8 @@ public class GitUtils {
 
                 if(lastDotIndex > 0){
                     extension = path.substring(lastDotIndex);
-                    log.info(extension);
                 }
+
                 return !excludedFileExtensions.contains(extension);
             }).toList();
 
@@ -96,9 +91,9 @@ public class GitUtils {
 
     //This will always push to the main branch
     public void gitPush(){
-        PushCommand pushCommand = git.push();
         String patToken = FileUtils.extractPATToken();
-        pushCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(patToken , ""));
+        PushCommand pushCommand = git.push()
+                .setCredentialsProvider(new UsernamePasswordCredentialsProvider(patToken , ""));
         try{
             pushCommand.call();
             log.info("Successfully pushed changes to remote git repository");

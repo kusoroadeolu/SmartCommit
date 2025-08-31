@@ -6,7 +6,6 @@ import org.eclipse.jgit.patch.FileHeader;
 import org.test.diffsummary.DiffSummary;
 import org.test.exceptions.GitDiffException;
 
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -15,12 +14,10 @@ import java.util.List;
 import java.util.logging.Logger;
 
 public class DiffEntryParser {
-    private final GitUtils gitUtils;
     private final Git git;
     private static final Logger log = Logger.getLogger(DiffEntryParser.class.getName());
 
-    public DiffEntryParser(GitUtils gitUtils, Git git){
-        this.gitUtils = gitUtils;
+    public DiffEntryParser(Git git){
         this.git = git;
     }
 

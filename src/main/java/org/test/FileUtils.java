@@ -2,7 +2,6 @@ package org.test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.checkerframework.checker.units.qual.C;
 import org.test.exceptions.FileOperationsException;
 import org.test.singletons.ObjectMapperCreator;
 
@@ -12,7 +11,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Locale;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -20,7 +18,7 @@ public class FileUtils {
 
     private final static Logger log = Logger.getLogger(FileUtils.class.getName());
     private final static ObjectMapper OBJECT_MAPPER = ObjectMapperCreator.objectMapper();
-    private final static Path CONFIG_PATH = Path.of("smartcommit-config.json");
+    private final static Path CONFIG_PATH = Path.of(System.getProperty("user.dir") ,"smartcommit-config.json");
 
     //Just creates the config file
     public static void createConfigFile(){
@@ -51,6 +49,7 @@ public class FileUtils {
                     {
                      "exclude": [],
                      "commit-mode": "summary",
+                     "gemini-token": ""
                      "pat-token": ""
                     }
                     """;
@@ -118,6 +117,24 @@ public class FileUtils {
         }catch (IOException e){
             log.severe("An IO error occurred while trying to extract PAT Token from config file");
             throw new FileOperationsException("An IO error occurred while trying to extract PAT Token from config file");
+        }
+    }
+
+    public static String extractGeminiToken(){
+        try {
+            byte[] bytes = Files.readAllBytes(CONFIG_PATH);
+            String token = extractJsonDataAsString(bytes, "gemini-token");
+
+            if(token == null || token.isEmpty()){
+                log.severe("PAT Token cannot be null or empty");
+                throw new FileOperationsException("PAT Token cannot be null or empty");
+            }
+
+            return token;
+
+        }catch (IOException e){
+            log.severe("An IO error occurred while trying to extract Gemini Token from config file");
+            throw new FileOperationsException("An IO error occurred while trying to extract Gemini Token from config file");
         }
     }
 

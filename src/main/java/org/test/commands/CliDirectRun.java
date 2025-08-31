@@ -1,7 +1,6 @@
 package org.test.commands;
 
 import org.test.SmartCommitService;
-import org.test.singletons.GeminiClient;
 import picocli.CommandLine;
 
 @CommandLine.Command(
@@ -19,7 +18,7 @@ public class CliDirectRun implements Runnable{
             description = "Prints a commit message with more diff context \"detail\", otherwise defaults to a summary message with less diff context",
             paramLabel = "<commit mode>"
     )
-    private String mode;
+    private String mode = "";
 
     @CommandLine.Option(
             names = {"-msg", "--message"},
