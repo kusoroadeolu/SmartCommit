@@ -49,7 +49,7 @@ public class CliDirectRun implements Runnable{
         System.out.println("Executing direct run command...");
         SmartCommitService smartCommitService = new SmartCommitService();
         smartCommitService.directRun(mode.toLowerCase(), message, name, email);
-        System.out.println("Successfully added, committed and pushed Git changes remote repository");
+        System.out.println("Successfully added, committed and pushed Git changes to your remote repository");
 
 
     }
