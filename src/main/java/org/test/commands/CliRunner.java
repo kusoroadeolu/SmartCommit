@@ -23,8 +23,7 @@ public class CliRunner implements Runnable{
     }
 
     public void run(){
-        //THIS WILL PRINT OUT THE READ ME LOL
-        System.out.println();
+        //TODO Make this print out the README file?
     }
 
 }

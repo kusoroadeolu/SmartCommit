@@ -35,6 +35,8 @@
 #### smartcommit direct-run -> Runs 3 git commands (git add -> git commit with a generated message and git push to your remote repo) 
 #### smartcommit direct-run -m "summary/detail" or direct-run --mode "summary/detail" -> Runs the direct-run command with a generated commit message
 #### smartcommit direct-run -m "manual" -msg "CUSTOM COMMIT MESSAGE" or direct-run -m "manual" --message"CUSTOM COMMIT MESSAGE" -> Runs the direct-run command with a custom commit message written by you. Note that a message must be specified if you use the manual mode
+#### smartcommit direct-run -e or --email -> Sets the email of the committer and author. Note that if you can specify this in your config file to prevent always typing this command
+#### smartcommit direct-run -n or --name -> Sets the name of the committer and author. Note that if you can specify this in your config file to prevent always typing this command
 #### smartcommit direct-run -h or direct-run --help -> Shows the description of the smart commit direct-run commands and all other command options under it
 #### smartcommit direct-run -V or direct-run --version -> Shows the current version of the direct-run command
 
@@ -43,6 +45,7 @@
 #### You need a PAT token to use the direct run command with https. You can get one from Settings -> Developer Settings -> PAT token on your GitHub account
 #### You can choose which file extensions you want to exclude when generating diff commit messages by adding the file extensions in the exclude array in the config file. E.g. exclude: [".md"] -> This will exclude .md files from being processed when creating commit messages
 #### You can also change your default commit context mode in your config file to prevent always setting it when you want to suggest commit messages
+#### You can set the name and email of the committer and author in the person ident block. If you dont, smartcommit will default to the name and email registered on the device
 #### IMPORTANT!!!! Always ensure you add your config file to gitignore to prevent exposing your secret API/PAT keys
 
 ### FEATURES ILL CONSIDER FOR LATER

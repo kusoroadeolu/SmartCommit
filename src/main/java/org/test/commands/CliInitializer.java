@@ -16,6 +16,8 @@ import picocli.CommandLine;
 
 public class CliInitializer implements Runnable{
     public void run(){
+        System.out.println("Initializing smart commit...");
         new SmartCommitInitializer().initConfig();
+        System.out.println("Successfully initialized smart commit");
     }
 }
