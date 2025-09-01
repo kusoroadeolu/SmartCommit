@@ -2,6 +2,7 @@ package org.test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.eclipse.jgit.lib.PersonIdent;
 import org.test.exceptions.FileOperationsException;
 import org.test.singletons.ObjectMapperCreator;
 
@@ -9,8 +10,10 @@ import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -18,9 +21,9 @@ public class FileUtils {
 
     private final static Logger log = Logger.getLogger(FileUtils.class.getName());
     private final static ObjectMapper OBJECT_MAPPER = ObjectMapperCreator.objectMapper();
-    private final static Path CONFIG_PATH = Path.of(System.getProperty("user.dir") ,"smartcommit-config.json");
+    private final static Path CONFIG_PATH = Path.of(Paths.get("").toAbsolutePath().normalize().toString() ,"smartcommit-config.json");
 
-    //Just creates the config file
+    // Creates the config file and writes to it
     public static void createConfigFile(){
         try{
             if (Files.exists(CONFIG_PATH)){
@@ -43,14 +46,19 @@ public class FileUtils {
 
     }
 
+    //Writes the necessary info on a blank slate to the config file
     protected static void writeToFile(){
         try{
             String initData = """
                     {
                      "exclude": [],
                      "commit-mode": "summary",
-                     "gemini-token": ""
-                     "pat-token": ""
+                     "gemini-token": "",
+                     "pat-token": "",
+                     "person-ident": {
+                        "name":"",
+                        "email":""
+                     }
                     }
                     """;
             byte[] toBytes = initData.getBytes();
@@ -62,8 +70,10 @@ public class FileUtils {
         }
     }
 
-    protected static String extractJsonDataAsString(byte[] bytes, String jsonPath){
+    //Extracts json data from the file as a string
+    protected static String extractJsonDataAsString(String jsonPath){
         try{
+            byte[] bytes = Files.readAllBytes(CONFIG_PATH);
             JsonNode rootNode = OBJECT_MAPPER.readTree(bytes);
             return rootNode.path(jsonPath).asText();
         }catch (IOException e){
@@ -102,52 +112,44 @@ public class FileUtils {
         }
     }
 
+    //Extracts the PAT token from the file
     public static String extractPATToken(){
-        try {
-            byte[] bytes = Files.readAllBytes(CONFIG_PATH);
-            String token = extractJsonDataAsString(bytes, "pat-token");
-
-            if(token == null || token.isEmpty()){
-                log.severe("PAT Token cannot be null or empty");
-                throw new FileOperationsException("PAT Token cannot be null or empty");
-            }
-
-            return token;
-
-        }catch (IOException e){
-            log.severe("An IO error occurred while trying to extract PAT Token from config file");
-            throw new FileOperationsException("An IO error occurred while trying to extract PAT Token from config file");
+        String token = extractJsonDataAsString("pat-token");
+        if(token == null || token.isEmpty()){
+            log.severe("PAT Token cannot be null or empty");
+            throw new FileOperationsException("PAT Token cannot be null or empty");
         }
+        return token;
+
     }
 
+    //Extracts the Gemini API Token from the file
     public static String extractGeminiToken(){
-        try {
-            byte[] bytes = Files.readAllBytes(CONFIG_PATH);
-            String token = extractJsonDataAsString(bytes, "gemini-token");
+        String token = extractJsonDataAsString("gemini-token");
 
-            if(token == null || token.isEmpty()){
-                log.severe("PAT Token cannot be null or empty");
-                throw new FileOperationsException("PAT Token cannot be null or empty");
-            }
-
-            return token;
-
-        }catch (IOException e){
-            log.severe("An IO error occurred while trying to extract Gemini Token from config file");
-            throw new FileOperationsException("An IO error occurred while trying to extract Gemini Token from config file");
+        if(token == null || token.isEmpty()){
+            log.severe("Gemini Token cannot be null or empty");
+            throw new FileOperationsException("Gemini Token cannot be null or empty");
         }
+
+        return token;
     }
 
+    //Extracts the commit mode from the file
     public static String extractCommitMode(){
-        try {
-            byte[] bytes = Files.readAllBytes(CONFIG_PATH);
-            return extractJsonDataAsString(bytes, "commit-mode").toLowerCase();
-        }catch (IOException e){
-            log.severe("An IO error occurred while trying to extract commit mode from config file");
-            throw new FileOperationsException("An IO error occurred while trying to extract commit mode from config file");
-        }
+            return extractJsonDataAsString("commit-mode").toLowerCase();
     }
 
-
-
+    //Extracts the person ident from the file
+    public static PersonIdentWrapper extractPersonIdent() {
+        try{
+            byte[] bytes = Files.readAllBytes(CONFIG_PATH);
+            JsonNode node = OBJECT_MAPPER.readTree(bytes);
+            JsonNode personIdentNode = node.get("person-ident");
+            return OBJECT_MAPPER.convertValue(personIdentNode, PersonIdentWrapper.class);
+        }catch (IOException e){
+            log.severe("An IO error occurred while trying to extract person ident from config file");
+            throw new FileOperationsException("An IO error occurred while trying to extract person ident from config file");
+        }
+    }
 }

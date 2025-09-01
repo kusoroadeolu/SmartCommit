@@ -4,8 +4,11 @@ import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.dircache.DirCache;
+import org.eclipse.jgit.lib.PersonIdent;
+import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.transport.PushResult;
+import org.eclipse.jgit.transport.RefSpec;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -183,13 +186,18 @@ class GitUtilsTest {
         CommitCommand commitCommand = mock(CommitCommand.class);
         RevCommit revCommit = mock(RevCommit.class);
         String message = "I committed smth lol";
+        String name = "name";
+        String email = "email";
 
         when(git.commit()).thenReturn(commitCommand);
         when(commitCommand.setMessage(message)).thenReturn(commitCommand);
+        when(commitCommand.setAuthor(any(PersonIdent.class))).thenReturn(commitCommand);
+        when(commitCommand.setCommitter(any(PersonIdent.class))).thenReturn(commitCommand);
         when(commitCommand.call()).thenReturn(revCommit);
 
+
         //Act
-        RevCommit expected = gitUtils.gitCommit(message);
+        RevCommit expected = gitUtils.gitCommit(message, name, email);
 
         //Assert
         assertNotNull(expected);
@@ -205,15 +213,19 @@ class GitUtilsTest {
         //Arrange
         CommitCommand commitCommand = mock(CommitCommand.class);
         String message = "I committed smth lol";
+        String name = "name";
+        String email = "email";
 
         when(git.commit()).thenReturn(commitCommand);
         when(commitCommand.setMessage(message)).thenReturn(commitCommand);
+        when(commitCommand.setAuthor(any(PersonIdent.class))).thenReturn(commitCommand);
+        when(commitCommand.setCommitter(any(PersonIdent.class))).thenReturn(commitCommand);
         when(commitCommand.call()).thenThrow(new GitAPIException("Test Error") {
         });
 
         //Act && Assert
-        var ex =assertThrows(GitCommitException.class, () ->
-                gitUtils.gitCommit(message)
+        var ex = assertThrows(GitCommitException.class, () ->
+                gitUtils.gitCommit(message, name, email)
         );
         assertInstanceOf(GitAPIException.class, ex.getCause());
         assertTrue(ex.getMessage().contains("A Git API error occurred"));
@@ -227,6 +239,7 @@ class GitUtilsTest {
     void gitPush_shouldSuccessfullyPushChanges() throws GitAPIException {
         // Arrange
         PushCommand pushCommand = mock(PushCommand.class);
+        Repository repo = mock(Repository.class);
         String patToken = "pat-token";
 
         try(MockedStatic<FileUtils> utils = Mockito.mockStatic(FileUtils.class)){
@@ -234,6 +247,8 @@ class GitUtilsTest {
         }
 
         when(git.push()).thenReturn(pushCommand);
+        when(git.getRepository()).thenReturn(repo);
+        when(pushCommand.setRefSpecs(any(RefSpec.class))).thenReturn(pushCommand);
         when(pushCommand.setCredentialsProvider(any(UsernamePasswordCredentialsProvider.class))).thenReturn(pushCommand);
 
         // Act
@@ -249,14 +264,17 @@ class GitUtilsTest {
     @Test
     void gitPush_shouldThrowGitPushException_onGitAPIError() throws GitAPIException {
         // Arrange
-        String patToken = "token";
+        String patToken = "pat-token";
         PushCommand pushCommand = mock(PushCommand.class);
+        Repository repo = mock(Repository.class);
 
         try(MockedStatic<FileUtils> utils = Mockito.mockStatic(FileUtils.class)){
             utils.when(FileUtils::extractPATToken).thenReturn(patToken);
         }
 
         when(git.push()).thenReturn(pushCommand);
+        when(git.getRepository()).thenReturn(repo);
+        when(pushCommand.setRefSpecs(any(RefSpec.class))).thenReturn(pushCommand);
         when(pushCommand.setCredentialsProvider(any(UsernamePasswordCredentialsProvider.class))).thenReturn(pushCommand);
         when(pushCommand.call()).thenThrow(new GitAPIException("Test Git API Push Error") {}); // Simulate GitAPIException
 

@@ -52,13 +52,9 @@ public class SmartCommitService {
     //Handle how commit messages are suggested
     private String handleMode(String mode, List<DiffEntry> entries){
         return switch (mode){
-            case "detail" -> {
-                yield generateMessageWithDetailedContext(entries);
-            }
-            case "summary" -> generateMessageWithSummaryContext(entries);
-            default -> {
-                yield generateMessageWithSummaryContext(entries);
-            }
+            case "detail" -> generateMessageWithDetailedContext(entries);
+            default -> generateMessageWithSummaryContext(entries);
+
         };
     }
 
@@ -77,7 +73,7 @@ public class SmartCommitService {
     }
 
     //Handles the basic git push flow(add -> commit -> push) with an automatic message
-    public void directRun(String mode, String message){
+    public void directRun(String mode, String message, String name, String email){
        try{
            gitUtils.gitAdd();
            if(Objects.equals(mode, "manual")){
@@ -85,10 +81,10 @@ public class SmartCommitService {
                    log.info("Messages in manual mode cannot be empty or null. Please write a valid message");
                    throw new SmartCommitException("Messages in manual mode cannot be empty or null. Please write a valid message");
                }
-               gitUtils.gitCommit(message);
+               gitUtils.gitCommit(message, name, email);
            }else{
                String suggestedMessage = suggestMessage(mode);
-               gitUtils.gitCommit(suggestedMessage);
+               gitUtils.gitCommit(suggestedMessage, name, email);
            }
 
            gitUtils.gitPush();

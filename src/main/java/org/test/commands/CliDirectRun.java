@@ -27,10 +27,27 @@ public class CliDirectRun implements Runnable{
     )
     private String message;
 
+    @CommandLine.Option(
+            names = {"-n", "--name"},
+            description = "The name of the committer and author",
+            paramLabel = "<committer and author name>"
+    )
+    private String name = "";
+
+    @CommandLine.Option(
+            names = {"-e", "--email"},
+            description = "The email of the committer and author",
+            paramLabel = "<committer and author email>"
+    )
+    private String email = "";
+
+
+
+
     @Override
     public void run() {
         SmartCommitService smartCommitService = new SmartCommitService();
-        smartCommitService.directRun(mode.toLowerCase(), message);
+        smartCommitService.directRun(mode.toLowerCase(), message, name, email);
 
 
     }

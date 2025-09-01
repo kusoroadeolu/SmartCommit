@@ -7,6 +7,9 @@ import com.google.genai.types.GenerateContentResponse;
 import com.google.genai.types.Part;
 import org.test.FileUtils;
 
+/**
+ * Gemini wrapper class that abstracts most of gemini's features
+ * */
 public class GeminiClient {
     private final Client client;
     private static final String AI_MODEL = "gemini-2.5-flash";
