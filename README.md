@@ -53,7 +53,6 @@
 #### SSH Based Auth instead of PAT 
 #### More summary context modes
 #### Allow users to tweak their commit message responses to better fit their use case
-#### Allow users to push from their custom local git branch to their remote git branch
 
 ### TECHNOLOGIES USED
 Java 21
