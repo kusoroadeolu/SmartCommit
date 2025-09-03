@@ -1,66 +1,102 @@
-#  PROJECT DESCRIPTION 
+# SmartCommit
 
-### Smart Commit is a simple CLI tool which allows you to suggest commit messages if you're not feeling in the mood to write commit messages
+SmartCommit is a simple CLI tool that suggests commit messages when you don’t feel like writing them.
 
-## SETUP AND INSTRUCTIONS(WINDOWS ONLY)
-#### Setting up smart commit is very simple. Before you do ensure you have docker or docker desktop properly set up on your device
-#### 1. Clone the repo: Command -> git clone "https://github.com/kusoroadeolu/SmartCommit"
-#### 2. In the directory you cloned the repo build the docker image -> Command: "docker build -t smartcommit ."
-#### 3. Configure the .bat file to write commands globally and easily: 
-#### a. Go to any directory in your device, 
-#### b.Create a folder named bin and drop the provided .bat file in there, 
-#### c. Open up system variables, go to Path and add the directory path(of the folder holding the .bat file not the dir path of the .bat file itself) to the Path system variables
-#### NOTE: The bat file allows you to use smartcommit in any git directory, so it's definitely cool to have unless you want to be typing docker commands for days, otherwise you might as well just stick to plain old git
+---
 
-#### d. To ensure you've set up everything properly, go to your cmd line and type in "where smartcommit". You should see the location of the bat file. If you do you've set it up properly
+## 🚀 Setup and Instructions (Windows Only)
+Before you start, ensure you have Docker or Docker Desktop properly set up.
 
-## COMMANDS
-### Help Command
-#### smartcommit -h or smartcommit --help -> Shows the description of smart commit and all subcommands under it
+### 1. Clone the Repo
+```sh
+git clone "https://github.com/kusoroadeolu/SmartCommit"
+```
 
-### Init command
-#### smartcommit --init -> Checks if the folder it is initialized in is a git repository and creates the config file
-#### smartcommit --init -h or --init --help -> Shows the description of the smart commit init commands and all other command options under it
-#### smartcommit --init -V or --init --version -> Shows the current version of the init command
+### 2. Build the Docker Image
+```sh
+docker build -t smartcommit .
+```
 
-### Suggest command 
-#### smartcommit suggest -> Suggests a commit message based on git diffs staged for commit 
-#### smartcommit suggest "summary" -> Suggests a commit message with less detailed git diff context (smartcommit suggest automatically defaults to this unless specified in your config file)
-#### smartcommit suggest "detail" -> Suggests a commit message with more detailed git diff context
-#### smartcommit suggest -h or suggest --help -> Shows the description of the smart commit suggest commands and all other command options under it
-#### smartcommit suggest -V or suggest --version -> Shows the current version of the suggest command
+### 3. Configure the `.bat` File (Global Command Access)
+1. Create a folder named `bin` anywhere on your device.
+2. Place the provided `.bat` file inside the `bin` folder.
+3. Open **System Environment Variables** → edit `Path` → add the folder path (not the `.bat` file path).
+4. Confirm setup by running:
+   ```sh
+   where smartcommit
+   ```
+   If it shows the location of the `.bat` file, you’re set.
 
-### Direct run command
-### NOTE: To use this command you have to get your Personal Access Token and paste it in the config file to allow git to authenticate th cli tool when pushing
-#### smartcommit direct-run -> Runs 3 git commands (git add -> git commit with a generated message and git push to your remote repo) 
-#### smartcommit direct-run -m "summary/detail" or direct-run --mode "summary/detail" -> Runs the direct-run command with a generated commit message
-#### smartcommit direct-run -m "manual" -msg "CUSTOM COMMIT MESSAGE" or direct-run -m "manual" --message"CUSTOM COMMIT MESSAGE" -> Runs the direct-run command with a custom commit message written by you. Note that a message must be specified if you use the manual mode
-#### smartcommit direct-run -e or --email -> Sets the email of the committer and author. Note that if you can specify this in your config file to prevent always typing this command
-#### smartcommit direct-run -n or --name -> Sets the name of the committer and author. Note that if you can specify this in your config file to prevent always typing this command
-#### smartcommit direct-run -h or direct-run --help -> Shows the description of the smart commit direct-run commands and all other command options under it
-#### smartcommit direct-run -V or direct-run --version -> Shows the current version of the direct-run command
+> **Note:** The `.bat` script mounts your current directory into Docker so SmartCommit can access your Git repo. Without it, you’d have to type long Docker commands manually.
 
-### MORE INFORMATION ON THE CONFIG FILE
-#### You need a gemini api key to run this project. You can get one from https://aistudio.google.com/apikey and plug it into your config file
-#### You need a PAT token to use the direct run command with https. You can get one from Settings -> Developer Settings -> PAT token on your GitHub account
-#### You can choose which file extensions you want to exclude when generating diff commit messages by adding the file extensions in the exclude array in the config file. E.g. exclude: [".md"] -> This will exclude .md files from being processed when creating commit messages
-#### You can also change your default commit context mode in your config file to prevent always setting it when you want to suggest commit messages
-#### You can set the name and email of the committer and author in the person ident block. If you dont, smartcommit will default to the name and email registered on the device
-#### IMPORTANT!!!! Always ensure you add your config file to gitignore to prevent exposing your secret API/PAT keys
+---
 
-### FEATURES ILL CONSIDER FOR LATER
-#### Global config files to avoid constant re-config unless the user explicitly enables it
-#### SSH Based Auth instead of PAT 
-#### More summary context modes
-#### Allow users to tweak their commit message responses to better fit their use case
+## 📖 Commands
 
-### TECHNOLOGIES USED
-Java 21
-Docker
-Maven
-JGit & Git
+### General Help
+- `smartcommit -h` or `smartcommit --help` → Show description and all subcommands.
 
-### CREATED BY
-Kusoro Victor
-Version 1.0.0
+### Init Command
+- `smartcommit --init` → Initialize SmartCommit in a Git repo (creates config file).
+- `smartcommit --init -h` → Help for init.
+- `smartcommit --init -V` → Show init version.
 
+### Suggest Command
+- `smartcommit suggest` → Suggest commit message from staged Git diffs.
+- `smartcommit suggest summary` → Suggest shorter, summary-style message.
+- `smartcommit suggest detail` → Suggest more detailed message.
+- `smartcommit suggest -h` → Help for suggest.
+- `smartcommit suggest -V` → Show suggest version.
+
+### Direct Run Command
+> ⚠️ Requires a GitHub Personal Access Token (PAT) in the config file for HTTPS auth.
+
+- `smartcommit direct-run` → Runs `git add`, generates commit message, then `git push`.
+- `smartcommit direct-run -m summary|detail` → Same, with chosen mode.
+- `smartcommit direct-run -m manual -msg "CUSTOM MESSAGE"` → Use custom commit message.
+- `smartcommit direct-run -e you@example.com` → Set committer email.
+- `smartcommit direct-run -n "Your Name"` → Set committer name.
+- `smartcommit direct-run -h` → Help for direct-run.
+- `smartcommit direct-run -V` → Show direct-run version.
+
+---
+
+## ⚙️ Config File
+
+SmartCommit requires configuration for API and Git credentials.
+
+- **Gemini API key** → Required. Get one at: [AI Studio](https://aistudio.google.com/apikey)
+- **GitHub PAT token** → Needed for direct-run with HTTPS. Generate in GitHub Settings → Developer Settings → PAT.
+- **Exclude files** → Add extensions to skip in diffs:
+  ```json
+  "exclude" : [".md", ".xml"]
+  ```  
+- **Commit context mode** → Set default to `summary` or `detail`.
+- **Person identity** → Set default committer name/email. Defaults to system Git identity if not set.
+- **Important** → Add config file to `.gitignore` to avoid leaking API keys.
+
+---
+
+## 🔮 Planned Features
+
+- Global config files (optional).
+- SSH-based authentication (instead of PAT).
+- More summary/detail context modes.
+- Message customization/tweaks.
+- GraalVM integration to bypass JVM startup time
+
+---
+
+## 🛠️ Tech Stack
+
+- Java 21
+- Docker
+- Maven
+- JGit & Git
+
+---
+
+## 👤 Author
+
+**Kusoro Victor**  
+Version `1.0.0`
